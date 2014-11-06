@@ -6,6 +6,9 @@ FIRST_DIR="${SCRIPT_DIR}/test_first_dir/"
 SECOND_DIR="${SCRIPT_DIR}/test_second_dir/"
 OUTPUT_DIR="${SCRIPT_DIR}/test_output_dir/"
 
+EXEC="python ${SCRIPT_DIR}/diffcp.py"
+OPT="--verbose --batch"
+
 if [[ $1 == "clean" ]]; then
     echo "Cleaning output directory..."
     if [[ $( find ${OUTPUT_DIR} -type f ) ]]; then
@@ -17,6 +20,8 @@ if [[ $1 == "clean" ]]; then
     exit 0
 fi
 
-python diffcp.py $FIRST_DIR $SECOND_DIR $OUTPUT_DIR --verbose --batch
-
-exit 0
+if [[ $EXEC $FIRST_DIR $SECOND_DIR $OUTPUT_DIR $OPT ]]; then
+    exit 0
+else
+    exit 1
+fi
