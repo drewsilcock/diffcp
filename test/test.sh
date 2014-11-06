@@ -17,6 +17,6 @@ if [[ $1 == "clean" ]]; then
     exit 0
 fi
 
-python ../diffcp/diffcp.py $FIRST_DIR $SECOND_DIR $OUTPUT_DIR --verbose
+python ../diffcp/diffcp.py $FIRST_DIR $SECOND_DIR $OUTPUT_DIR --verbose --batch
 
 exit 0

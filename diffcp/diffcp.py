@@ -26,7 +26,7 @@ def find_unique_files(first_folder, second_folder, verbose):
     return unique_full_filenames
 
 
-def check_output_dir(directory):
+def check_output_dir(directory, batch):
     """ Check whether `directory` exists. If it doesn't, create it. """
 
     if isfile(directory):  # Should this be absolved into the try mkdir?
@@ -46,14 +46,18 @@ def check_output_dir(directory):
             print "Error message: {}".format(e.message)
             exit(3)
         else:
-            print "Successfully created dirctory '{}'.\n".format(directory)
+            print "Successfully created directory '{}'.\n".format(directory)
     else:
-        inp = raw_input("""\nDirectory '{}' already exists. \
-                        \nDo you want to proceed? ['y', 'yes' or Enter] \
-                        \n> """.format(directory))
-        if inp.lower() not in ["", "yes", "y"]:
-            print "Exiting..."
-            exit(2)
+        if not batch:
+            inp = raw_input("""\nDirectory '{}' already exists. \
+                            \nDo you want to proceed? ['y', 'yes' or Enter] \
+                            \n> """.format(directory))
+            if inp.lower() not in ["", "yes", "y"]:
+                print "Exiting..."
+                exit(2)
+        else:
+            print "\nDirectory already exists, but continuing as batch flag is",
+            print "set."
 
     return True
 
@@ -77,13 +81,13 @@ def cp_files(filenames, directory, verbose):
     return True
 
 
-def diffcp(first_folder, second_folder, output_folder, verbose):
+def diffcp(first_folder, second_folder, output_folder, batch, verbose):
     """ Finds all files present in `first_folder` and not in `second_folder`,
     and copies them from `first_folder` into `output_folder`. """
 
     unique_files = find_unique_files(first_folder, second_folder, verbose)
 
-    check_output_dir(output_folder)
+    check_output_dir(output_folder, batch)
 
     # Should I include `is True` here? What does PEP8 say?
     # In fact, maybe this check isn't necessary in the first place, since
@@ -109,18 +113,20 @@ def print_version(ctx, param, value):
 @click.argument("first_folder")
 @click.argument("second_folder")
 @click.argument("output_folder")
+@click.option("-b", "--batch", is_flag=True,
+              help="Don't ask for confirmation if output directory exists.")
 @click.option("-v", "--verbose", is_flag=True,
               help="""Print additional information as unique files are \
                       identified and copied.""")
 @click.option("-V", "--version", is_flag=True, callback=print_version,
               expose_value=False, is_eager=True, default=False)
-def main(first_folder, second_folder, output_folder, verbose):
+def main(first_folder, second_folder, output_folder, batch, verbose):
     """ Find all files in `first_folder` that don't have any corresponding
     files of the same filename in `second_folder`, and copying them into
     separate folder `output_folder`. Note that currently only filenames
     and not file contents are checked for equality. """
 
-    return diffcp(first_folder, second_folder, output_folder, verbose)
+    return diffcp(first_folder, second_folder, output_folder, batch, verbose)
 
 
 if __name__ == "__main__":
