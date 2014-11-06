@@ -1,6 +1,8 @@
 diffcp
 ======
 
+![Travis CI Build Status](https://travis-ci.org/drewsberry/diffcp.svg?branch=master)
+
 Return Codes
 ------------
 
