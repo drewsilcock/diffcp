@@ -20,8 +20,11 @@ if [[ $1 == "clean" ]]; then
     exit 0
 fi
 
-if [[ $EXEC $FIRST_DIR $SECOND_DIR $OUTPUT_DIR $OPT ]]; then
+echo "Testing diffcp.py..."
+if [[ $( $EXEC $FIRST_DIR $SECOND_DIR $OUTPUT_DIR $OPT ) ]]; then
+    echo "Test passed."
     exit 0
 else
+    echo "Test failed."
     exit 1
 fi
