@@ -4,10 +4,6 @@ from os import listdir
 from os.path import isfile, isdir, basename
 
 
-class CopyError(Exception):
-    pass
-
-
 def find_unique_files(first_folder, second_folder, verbose):
     """ Return the list of files which are present in `first_folder`, but not
     in `second_folder`. """
@@ -29,22 +25,17 @@ def find_unique_files(first_folder, second_folder, verbose):
 def check_output_dir(directory, batch):
     """ Check whether `directory` exists. If it doesn't, create it. """
 
-    if isfile(directory):  # Should this be absolved into the try mkdir?
-        print """\nError: '{}' is a file. Please choose another output \
-                 directory name.""".format(directory)
-        exit(1)
-
     if not isdir(directory):
         print "\nDirectory '{}' does not yet exist. Creating dir...".format(
             directory)
         try:
             os.mkdir(directory)
-        except Exception as e:  # Find out the more specific error
+        except OSError as e:
             print "Error: Error creating output directory '{}'".format(
                 directory)
             print "Exception: {}".format(e.__doc__)
             print "Error message: {}".format(e.message)
-            exit(3)
+            exit(1)
         else:
             print "Successfully created directory '{}'.\n".format(directory)
     else:
@@ -89,14 +80,8 @@ def diffcp(first_folder, second_folder, output_folder, batch, verbose):
 
     check_output_dir(output_folder, batch)
 
-    # Should I include `is True` here? What does PEP8 say?
-    # In fact, maybe this check isn't necessary in the first place, since
-    # errors in `cp_files` will be caught in that method...
-    if cp_files(unique_files, output_folder, verbose) is True:
-        print "\nAll unique files successfully copied into output directory."
-    else:
-        print "\nError copying unique files.\n"
-        raise CopyError
+    cp_files(unique_files, output_folder, verbose)
+    print "\nAll unique files successfully copied into output directory."
 
     return True
 
